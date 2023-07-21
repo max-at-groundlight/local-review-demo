@@ -1,112 +1,111 @@
-import Image from 'next/image'
+"use client"
+
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { useCallback, useEffect, useState } from "react";
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+
+type Input = {
+  cancel?: boolean;
+  image: string;
+  det_query: string;
+  det_id: string;
+  det_name: string;
+  det_idx: number;
+  imgsrc_idx: number;
+  uuid: string;
+}
 
 export default function Home() {
+  const [socketUrl, setSocketUrl] = useState('ws://localhost:8000/ws');
+  const [messageHistory, setMessageHistory] = useState<string[]>([]);
+  const [inputQueue, setInputQueue] = useState<Input[]>([]);
+
+  // const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+  const { sendJsonMessage, lastJsonMessage: lastMessage, readyState } = useWebSocket(socketUrl);
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      // const json: { image: string } = JSON.parse(lastMessage.toString());
+      const json: Input = lastMessage as any;
+      if (json.cancel) {
+        console.log("cancel");
+        console.log(json);
+        setInputQueue((prev) => prev.filter((val) => val.uuid != json.uuid));
+        return;
+      }
+      if (!json.image) return;
+      // json.image = json.image.replace("b'", "").replace("'", "").replace("=", "");
+      console.log("new image");
+      console.log(json);
+      setInputQueue((prev) => prev.concat(json));
+    }
+    // setTimeout(() => {
+    //   console.log(messageHistory);
+    // }, 1000);
+  }, [lastMessage, setMessageHistory]);
+
+  // const handleClickChangeSocketUrl = useCallback(
+  //   () => setSocketUrl('wss://demos.kaazing.com/echo'),
+  //   []
+  // );
+
+  // const handleClickSendMessage = useCallback(() => sendMessage('Hello'), []);
+
+  // const connectionStatus = {
+  //   [ReadyState.CONNECTING]: 'Connecting',
+  //   [ReadyState.OPEN]: 'Open',
+  //   [ReadyState.CLOSING]: 'Closing',
+  //   [ReadyState.CLOSED]: 'Closed',
+  //   [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  // }[readyState];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="flex flex-col min-h-screen w-full">
+      <h1 className="text-4xl font-bold text-center">Local Review</h1>
+      <div className="p-5"></div>
+      {
+        inputQueue.length > 0 && inputQueue[0].image != "" &&
+        <div className="flex flex-col gap-2 place-items-center">
+          <h2 className="text-2xl font-bold text-center">{inputQueue[0].det_query}</h2>
+          <img src={`data:image/jpeg;base64,${inputQueue[0].image}`} alt="base64" className="w-3/4 rounded-xl" />
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      }
+      <div className="p-1 m-auto"></div>
+      <div className="w-full flex p-5">
+        <div className="p-1 m-auto"></div>
+        <div className="px-12"></div>
+        <button className="bg-blue-500 hover:bg-blue-700 font-bold text-white rounded-md px-4 py-2" onClick={() => {
+          const output = {
+            ...inputQueue[0],
+            label: "YES"
+          };
+          console.log("output yes");
+          console.log(output);
+          sendJsonMessage(output);
+          setInputQueue((prev) => prev.slice(1));
+        }}>
+          PASS
+        </button>
+        <div className="px-6"></div>
+        <button className="bg-red-500 hover:bg-red-700 font-bold text-white rounded-md px-4 py-2" onClick={() => {
+          const output = {
+            ...inputQueue[0],
+            label: "NO"
+          };
+          console.log("output no");
+          console.log(output);
+          sendJsonMessage(output);
+          setInputQueue((prev) => prev.slice(1));
+        }}>
+          FAIL
+        </button>
+        <div className="p-1 m-auto"></div>
+        <button className="border-2 border-blue-500 hover:border-blue-700 font-bold text-blue-500 hover:text-blue-700 hover:bg-blue-200 rounded-md px-4 py-2 flex place-items-center gap-2" onClick={() => {
+          setInputQueue((prev) => prev.slice(1));
+        }}>
+          SKIP
+          <ArrowRightIcon className="h-5 w-5" />
+        </button>
       </div>
     </main>
   )
