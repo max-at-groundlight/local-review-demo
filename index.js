@@ -53,7 +53,7 @@ app.on('ready', function() {
 
     //Adjust zoom factor according to DPI or scale factor that we determined before
     console.log("Display with current scale factor: %o", 10);
-    mainWindow.webContents.setZoomFactor(10);
-    mainWindow.show()
+    win.webContents.setZoomFactor(10);
+    win.show()
 });
 });
