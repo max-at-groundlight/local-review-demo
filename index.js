@@ -7,11 +7,12 @@
 
 // const createWindow = () => {
 //     const win = new BrowserWindow({
-//       width: 800,
-//       height: 600,
-//       webPreferences: {
-//         preload: path.join(__dirname, 'preload.js')
-//       }
+//       // width: 800,
+//       // height: 600,
+//       // webPreferences: {
+//       //   preload: path.join(__dirname, 'preload.js')
+//       // }
+//       fullscreen: true,
 //     })
   
 //     win.loadURL('http://localhost:3000')
@@ -20,20 +21,17 @@
 // // createWindow()
 
 // app.whenReady().then(() => {
-  //     createWindow()
-  //   })
+//       createWindow()
+//     })
   
-  const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, screen } = require('electron');
+
+app.on('ready', function() {
+  // screen.getPrimaryDisplay()
   
-  console.log("Hello World")
-  
-  app.on('ready', function() {
-    var win = new BrowserWindow({
-      // show: false,
-      fullscreen: true,
-    });
-    // mainWindow.maximize();
-    // mainWindow.loadFile('index.html');
-    win.loadURL('http://localhost:3000')
-    // mainWindow.show();
+  var win = new BrowserWindow({
+    fullscreen: true,
+  });
+  win.webContents.setZoomFactor(3);
+  win.loadURL('http://localhost:3000')
 });
