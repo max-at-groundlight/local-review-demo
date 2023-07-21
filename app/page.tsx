@@ -16,7 +16,7 @@ type Input = {
 }
 
 export default function Home() {
-  const [socketUrl, setSocketUrl] = useState('ws://localhost:8000/ws');
+  const [socketUrl, setSocketUrl] = useState('ws://10.44.3.14:8000/ws');
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [inputQueue, setInputQueue] = useState<Input[]>([]);
 
