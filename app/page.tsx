@@ -34,44 +34,57 @@ export default function Home() {
         return;
       }
       if (!json.image) return;
-      // json.image = json.image.replace("b'", "").replace("'", "").replace("=", "");
       console.log("new image");
       console.log(json);
       setInputQueue((prev) => prev.concat(json));
     }
-    // setTimeout(() => {
-    //   console.log(messageHistory);
-    // }, 1000);
   }, [lastMessage, setMessageHistory]);
 
-  // const handleClickChangeSocketUrl = useCallback(
-  //   () => setSocketUrl('wss://demos.kaazing.com/echo'),
-  //   []
-  // );
+  useEffect(() => {
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (event.key === "a") {
+        const output = {
+          ...inputQueue[0],
+          label: "YES"
+        };
+        console.log("output yes");
+        console.log(output);
+        sendJsonMessage(output);
+        setInputQueue((prev) => prev.slice(1));
+      } else if (event.key === "s") {
+        const output = {
+          ...inputQueue[0],
+          label: "NO"
+        };
+        console.log("output no");
+        console.log(output);
+        sendJsonMessage(output);
+        setInputQueue((prev) => prev.slice(1));
+      } else if (event.key === "f") {
+        setInputQueue((prev) => prev.slice(1));
+      }
+    }
 
-  // const handleClickSendMessage = useCallback(() => sendMessage('Hello'), []);
+    document.addEventListener("keydown", (e) => {});
 
-  // const connectionStatus = {
-  //   [ReadyState.CONNECTING]: 'Connecting',
-  //   [ReadyState.OPEN]: 'Open',
-  //   [ReadyState.CLOSING]: 'Closing',
-  //   [ReadyState.CLOSED]: 'Closed',
-  //   [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-  // }[readyState];
+    return () => {
+      document.removeEventListener("keydown", keyDownHandler);
+    }
+  }, []);
 
   return (
     <main className="flex flex-col min-h-screen w-full">
       <h1 className="text-4xl font-bold text-center">Local Review</h1>
-      <div className="p-5"></div>
+      <div className="p-2"></div>
       {
         inputQueue.length > 0 && inputQueue[0].image != "" &&
         <div className="flex flex-col gap-2 place-items-center">
           <h2 className="text-2xl font-bold text-center">{inputQueue[0].det_query}</h2>
-          <img src={`data:image/jpeg;base64,${inputQueue[0].image}`} alt="base64" className="w-3/4 rounded-xl" />
+          <img src={`data:image/jpeg;base64,${inputQueue[0].image}`} alt="base64" className="w-1/2 rounded-xl" />
         </div>
       }
       <div className="p-1 m-auto"></div>
-      <div className="w-full flex p-5">
+      <div className="w-full flex p-5 pt-1">
         <div className="p-1 m-auto"></div>
         <div className="px-12"></div>
         <button className="bg-blue-500 hover:bg-blue-700 font-bold text-white rounded-md px-4 py-2" onClick={() => {
