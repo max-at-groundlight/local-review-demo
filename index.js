@@ -36,7 +36,7 @@ app.on('ready', function() {
   win.loadURL('http://localhost:3000')
 
   win.once("ready-to-show", () => {
-    createTray()
+    // createTray()
     if (!isDevelopment) {
         //mainWindow.setAlwaysOnTop(true);
         mainWindow.setFullScreen(true);
