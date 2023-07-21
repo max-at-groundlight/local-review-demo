@@ -42,6 +42,8 @@ export default function Home() {
 
   useEffect(() => {
     const keyDownHandler = (event: KeyboardEvent) => {
+      console.log(event.key);
+      if (inputQueue.length == 0) return;
       if (event.key === "a") {
         const output = {
           ...inputQueue[0],
@@ -70,7 +72,7 @@ export default function Home() {
     return () => {
       document.removeEventListener("keydown", keyDownHandler);
     }
-  }, []);
+  }, [inputQueue]);
 
   return (
     <main className="flex flex-col min-h-screen w-full">
@@ -85,7 +87,7 @@ export default function Home() {
       }
       <div className="p-1 m-auto"></div>
       <div className="w-full flex p-5 pt-1">
-        <div className="p-1 m-auto"></div>
+        <div className="p-5 m-auto"></div>
         <div className="px-12"></div>
         <button className="bg-blue-500 hover:bg-blue-700 font-bold text-white rounded-md px-4 py-2" onClick={() => {
           const output = {
@@ -112,13 +114,14 @@ export default function Home() {
         }}>
           FAIL
         </button>
-        <div className="p-1 m-auto"></div>
+        <div className="p-6"></div>
         <button className="border-2 border-blue-500 hover:border-blue-700 font-bold text-blue-500 hover:text-blue-700 hover:bg-blue-200 rounded-md px-4 py-2 flex place-items-center gap-2" onClick={() => {
           setInputQueue((prev) => prev.slice(1));
         }}>
           SKIP
           <ArrowRightIcon className="h-5 w-5" />
         </button>
+        <div className="p-1 m-auto"></div>
       </div>
     </main>
   )

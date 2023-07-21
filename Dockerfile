@@ -61,4 +61,4 @@ ENV HOSTNAME localhost
 
 COPY ./index.js ./index.js
 
-CMD ["node", "server.js", "&&", "npx", "electron", "."]
+CMD ["node", "server.js"]
