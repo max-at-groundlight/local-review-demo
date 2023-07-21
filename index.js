@@ -28,7 +28,7 @@
   console.log("Hello World")
   
   app.on('ready', function() {
-    var mainWindow = new BrowserWindow({
+    var win = new BrowserWindow({
       // show: false,
       fullscreen: true,
     });
