@@ -60,12 +60,12 @@ export default function Home() {
         console.log(output);
         sendJsonMessage(output);
         setInputQueue((prev) => prev.slice(1));
-      } else if (event.key === "f") {
+      } else if (event.key === "d") {
         setInputQueue((prev) => prev.slice(1));
       }
     }
 
-    document.addEventListener("keydown", (e) => {});
+    document.addEventListener("keydown", (e) => keyDownHandler(e));
 
     return () => {
       document.removeEventListener("keydown", keyDownHandler);
