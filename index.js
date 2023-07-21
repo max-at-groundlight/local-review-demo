@@ -34,4 +34,26 @@ app.on('ready', function() {
   });
   win.webContents.setZoomFactor(3);
   win.loadURL('http://localhost:3000')
+
+  win.once("ready-to-show", () => {
+    createTray()
+    if (!isDevelopment) {
+        //mainWindow.setAlwaysOnTop(true);
+        mainWindow.setFullScreen(true);
+        mainWindow.removeMenu();
+        mainWindow.maximize();
+
+
+    } else {
+        mainWindow.maximize();
+        mainWindow.setFullScreen(true);
+        mainWindow.removeMenu();
+        mainWindow.webContents.openDevTools();
+    }
+
+    //Adjust zoom factor according to DPI or scale factor that we determined before
+    console.log("Display with current scale factor: %o", 10);
+    mainWindow.webContents.setZoomFactor(10);
+    mainWindow.show()
+});
 });
