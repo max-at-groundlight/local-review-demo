@@ -25,6 +25,8 @@
 
 const { app, BrowserWindow } = require('electron');
 
+console.log("Hello World")
+
 app.on('ready', function() {
     var mainWindow = new BrowserWindow({
         show: false,
